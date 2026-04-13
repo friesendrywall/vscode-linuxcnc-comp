@@ -1,0 +1,147 @@
+{
+  "Basic Component Skeleton": {
+    "prefix": "comp-skeleton",
+    "body": [
+      "component ${1:mycomp} \"${2:Component description}\";",
+      "pin in float ${3:in} \"${4:Input pin}\";",
+      "pin out float ${5:out} \"${6:Output pin}\";",
+      "function _;",
+      "license \"GPL\";",
+      ";;",
+      "FUNCTION(_) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Basic LinuxCNC comp component skeleton"
+  },
+  "Userspace Component Skeleton": {
+    "prefix": "comp-userspace",
+    "body": [
+      "component ${1:mycomp} \"${2:Component description}\";",
+      "option userspace yes;",
+      "pin out float ${3:out} \"${4:Output pin}\";",
+      "license \"GPL\";",
+      ";;",
+      "#include <unistd.h>",
+      "",
+      "void user_mainloop(void) {",
+      "\twhile(1) {",
+      "\t\tusleep(${5:1000});",
+      "\t\tFOR_ALL_INSTS() {",
+      "\t\t\t$0",
+      "\t\t}",
+      "\t}",
+      "}"
+    ],
+    "description": "Userspace (non-realtime) component skeleton"
+  },
+  "Pin Declaration": {
+    "prefix": "pin",
+    "body": [
+      "pin ${1|in,out,io|} ${2|bit,float,signed,unsigned,s32,u32|} ${3:name} \"${4:Pin description}\";"
+    ],
+    "description": "HAL pin declaration"
+  },
+  "Param Declaration": {
+    "prefix": "param",
+    "body": [
+      "param ${1|r,rw|} ${2|bit,float,signed,unsigned,s32,u32|} ${3:name} = ${4:0} \"${5:Parameter description}\";"
+    ],
+    "description": "HAL parameter declaration"
+  },
+  "Function Declaration": {
+    "prefix": "function",
+    "body": [
+      "function ${1:_} ${2|fp,nofp|};"
+    ],
+    "description": "Function declaration"
+  },
+  "Variable Declaration": {
+    "prefix": "variable",
+    "body": [
+      "variable ${1:double} ${2:myvar} = ${3:0};"
+    ],
+    "description": "Per-instance variable declaration"
+  },
+  "Option Singleton": {
+    "prefix": "opt-singleton",
+    "body": ["option singleton yes;"],
+    "description": "Singleton option (one instance only)"
+  },
+  "Option Userspace": {
+    "prefix": "opt-userspace",
+    "body": ["option userspace yes;"],
+    "description": "Userspace (non-realtime) option"
+  },
+  "Option Extra Setup": {
+    "prefix": "opt-extra-setup",
+    "body": ["option extra_setup yes;"],
+    "description": "Enable EXTRA_SETUP per instance"
+  },
+  "Option Extra Cleanup": {
+    "prefix": "opt-extra-cleanup",
+    "body": ["option extra_cleanup yes;"],
+    "description": "Enable EXTRA_CLEANUP on exit"
+  },
+  "FUNCTION macro": {
+    "prefix": "FUNCTION",
+    "body": [
+      "FUNCTION(${1:_}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "FUNCTION macro body (realtime function)"
+  },
+  "EXTRA_SETUP macro": {
+    "prefix": "EXTRA_SETUP",
+    "body": [
+      "EXTRA_SETUP() {",
+      "\t$0",
+      "\treturn 0;",
+      "}"
+    ],
+    "description": "EXTRA_SETUP macro body"
+  },
+  "EXTRA_CLEANUP macro": {
+    "prefix": "EXTRA_CLEANUP",
+    "body": [
+      "EXTRA_CLEANUP() {",
+      "\t$0",
+      "}"
+    ],
+    "description": "EXTRA_CLEANUP macro body"
+  },
+  "FOR_ALL_INSTS macro": {
+    "prefix": "FOR_ALL_INSTS",
+    "body": [
+      "FOR_ALL_INSTS() {",
+      "\t$0",
+      "}"
+    ],
+    "description": "FOR_ALL_INSTS macro (userspace iteration)"
+  },
+  "Array pin": {
+    "prefix": "pin-array",
+    "body": [
+      "pin ${1|in,out,io|} ${2|bit,float,signed,unsigned,s32,u32|} ${3:name}-##[${4:4}] \"${5:Array pin description}\";"
+    ],
+    "description": "Array pin declaration"
+  },
+  "Conditional pin (personality)": {
+    "prefix": "pin-conditional",
+    "body": [
+      "pin ${1|in,out,io|} ${2|bit,float,signed,unsigned,s32,u32|} ${3:name} if personality & ${4:0x100} \"${5:Conditional pin description}\";"
+    ],
+    "description": "Conditional pin using personality"
+  },
+  "Include header": {
+    "prefix": "include",
+    "body": ["include <${1:rtapi_math.h}>;"],
+    "description": "Include a header file"
+  },
+  "License GPL": {
+    "prefix": "license",
+    "body": ["license \"GPL\"; // indicates GPL v2 or later"],
+    "description": "GPL license declaration"
+  }
+}

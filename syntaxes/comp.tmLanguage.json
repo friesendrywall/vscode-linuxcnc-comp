@@ -1,0 +1,294 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "LinuxCNC HAL Component",
+  "scopeName": "source.linuxcnc-comp",
+  "fileTypes": ["comp"],
+  "patterns": [
+    { "include": "#c-section" },
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#component-decl" },
+    { "include": "#pin-decl" },
+    { "include": "#param-decl" },
+    { "include": "#function-decl" },
+    { "include": "#option-decl" },
+    { "include": "#variable-decl" },
+    { "include": "#simple-decls" },
+    { "include": "#numbers" }
+  ],
+  "repository": {
+
+    "c-section": {
+      "comment": "Everything after ;; is C code",
+      "begin": "^(;;)\\s*$",
+      "end": "\\z",
+      "beginCaptures": {
+        "1": { "name": "keyword.operator.separator.linuxcnc-comp" }
+      },
+      "contentName": "meta.embedded.block.c",
+      "patterns": [
+        { "include": "#comp-macros" },
+        { "include": "source.c" }
+      ]
+    },
+
+    "comp-macros": {
+      "comment": "HAL component convenience macros used in the C section",
+      "patterns": [
+        {
+          "match": "\\b(FUNCTION|EXTRA_SETUP|EXTRA_CLEANUP|FOR_ALL_INSTS)\\b",
+          "name": "support.function.macro.linuxcnc-comp"
+        },
+        {
+          "match": "\\bfperiod\\b",
+          "name": "support.variable.macro.linuxcnc-comp"
+        }
+      ]
+    },
+
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.linuxcnc-comp",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.linuxcnc-comp",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": { "0": { "name": "punctuation.definition.comment.begin.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.comment.end.linuxcnc-comp" } }
+        }
+      ]
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "comment": "Triple-quoted doc strings",
+          "name": "string.quoted.triple.linuxcnc-comp",
+          "begin": "r?\"\"\"",
+          "end": "\"\"\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.linuxcnc-comp" } }
+        },
+        {
+          "comment": "Regular double-quoted strings",
+          "name": "string.quoted.double.linuxcnc-comp",
+          "begin": "r?\"",
+          "end": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.linuxcnc-comp" } },
+          "patterns": [
+            { "name": "constant.character.escape.linuxcnc-comp", "match": "\\\\." }
+          ]
+        }
+      ]
+    },
+
+    "component-decl": {
+      "begin": "^\\s*(component)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.component.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_-]*)\\b",
+          "captures": { "1": { "name": "entity.name.class.linuxcnc-comp" } }
+        }
+      ]
+    },
+
+    "pin-decl": {
+      "begin": "^\\s*(pin)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.pin.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "\\b(in|out|io)\\b",
+          "name": "keyword.other.direction.linuxcnc-comp"
+        },
+        {
+          "match": "\\b(bit|signed|unsigned|float|s32|u32)\\b",
+          "name": "storage.type.linuxcnc-comp"
+        },
+        {
+          "match": "\\b(if|personality)\\b",
+          "name": "keyword.control.condition.linuxcnc-comp"
+        },
+        {
+          "match": "[#\\[\\]]",
+          "name": "punctuation.definition.array.linuxcnc-comp"
+        },
+        { "include": "#numbers" },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_.#-]*)\\b",
+          "name": "entity.name.variable.pin.linuxcnc-comp"
+        }
+      ]
+    },
+
+    "param-decl": {
+      "begin": "^\\s*(param)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.param.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "\\b(rw|r)\\b",
+          "name": "keyword.other.direction.linuxcnc-comp"
+        },
+        {
+          "match": "\\b(bit|signed|unsigned|float|s32|u32)\\b",
+          "name": "storage.type.linuxcnc-comp"
+        },
+        {
+          "match": "\\b(if|personality)\\b",
+          "name": "keyword.control.condition.linuxcnc-comp"
+        },
+        {
+          "match": "[#\\[\\]]",
+          "name": "punctuation.definition.array.linuxcnc-comp"
+        },
+        { "include": "#numbers" },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_.#-]*)\\b",
+          "name": "entity.name.variable.param.linuxcnc-comp"
+        }
+      ]
+    },
+
+    "function-decl": {
+      "begin": "^\\s*(function)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.function.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "\\b(fp|nofp)\\b",
+          "name": "keyword.other.qualifier.linuxcnc-comp"
+        },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_-]*)\\b",
+          "name": "entity.name.function.linuxcnc-comp"
+        }
+      ]
+    },
+
+    "option-decl": {
+      "begin": "^\\s*(option)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.option.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "\\b(singleton|default_count|count_function|rtapi_app|data|extra_setup|extra_cleanup|userspace|userinit|extra_link_args|extra_compile_args|homemod|tpmod|constructable)\\b",
+          "name": "support.constant.option.linuxcnc-comp"
+        },
+        {
+          "match": "\\b(yes|no)\\b",
+          "name": "constant.language.boolean.linuxcnc-comp"
+        },
+        { "include": "#numbers" }
+      ]
+    },
+
+    "variable-decl": {
+      "begin": "^\\s*(variable)\\b",
+      "end": ";",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.variable.linuxcnc-comp" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#numbers" },
+        {
+          "match": "\\b(int|unsigned|float|double|long|short|char|u32|s32|hal_bit_t|hal_float_t|hal_s32_t|hal_u32_t|bool)\\b",
+          "name": "storage.type.c.linuxcnc-comp"
+        },
+        {
+          "match": "\\*",
+          "name": "keyword.operator.pointer.linuxcnc-comp"
+        },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "name": "variable.other.linuxcnc-comp"
+        }
+      ]
+    },
+
+    "simple-decls": {
+      "patterns": [
+        {
+          "begin": "^\\s*(description|examples|notes|see_also)\\b",
+          "end": ";",
+          "beginCaptures": { "1": { "name": "keyword.control.doc.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#comments" }
+          ]
+        },
+        {
+          "begin": "^\\s*(license|author)\\b",
+          "end": ";",
+          "beginCaptures": { "1": { "name": "keyword.control.meta.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#comments" }
+          ]
+        },
+        {
+          "begin": "^\\s*(include)\\b",
+          "end": ";",
+          "beginCaptures": { "1": { "name": "keyword.control.include.linuxcnc-comp" } },
+          "endCaptures": { "0": { "name": "punctuation.terminator.linuxcnc-comp" } },
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#comments" },
+            {
+              "name": "string.quoted.other.lt-gt.include.linuxcnc-comp",
+              "match": "<[^>]+>"
+            }
+          ]
+        }
+      ]
+    },
+
+    "numbers": {
+      "patterns": [
+        {
+          "match": "\\b0x[0-9A-Fa-f]+\\b",
+          "name": "constant.numeric.hex.linuxcnc-comp"
+        },
+        {
+          "match": "\\b[0-9]+\\.?[0-9]*([eE][+-]?[0-9]+)?\\b",
+          "name": "constant.numeric.linuxcnc-comp"
+        }
+      ]
+    }
+  }
+}

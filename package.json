@@ -1,0 +1,63 @@
+{
+  "name": "linuxcnc-comp",
+  "displayName": "LinuxCNC HAL Component (.comp)",
+  "description": "Syntax highlighting, IntelliSense, diagnostics, and hover docs for LinuxCNC .comp HAL component files",
+  "version": "0.1.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "linuxcnc-comp",
+        "aliases": [
+          "LinuxCNC Comp",
+          "comp"
+        ],
+        "extensions": [
+          ".comp"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "linuxcnc-comp",
+        "scopeName": "source.linuxcnc-comp",
+        "path": "./syntaxes/comp.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.c": "c"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "linuxcnc-comp",
+        "path": "./snippets/comp.json"
+      }
+    ],
+    "configurationDefaults": {
+      "[linuxcnc-comp]": {
+        "editor.defaultFormatter": "local.linuxcnc-comp"
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}
