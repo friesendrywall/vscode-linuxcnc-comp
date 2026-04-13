@@ -1,4 +1,8 @@
 import * as vscode from 'vscode';
+import * as cp from 'child_process';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -1074,6 +1078,33 @@ function formatDeclSection(lines: string[]): string[] {
   return result;
 }
 
+/** Locate the clang-format binary bundled with the clang-format npm package. */
+function getClangFormatBinary(): string | null {
+  const binDir = path.join(__dirname, '..', 'node_modules', 'clang-format', 'bin');
+  const platform = os.platform();
+  const arch = os.arch();
+  const candidate = platform === 'win32'
+    ? path.join(binDir, 'win32', 'clang-format.exe')
+    : path.join(binDir, `${platform}_${arch}`, 'clang-format');
+  if (fs.existsSync(candidate)) { return candidate; }
+  // arm64 macOS fallback to x64 binary
+  if (platform === 'darwin' && arch === 'arm64') {
+    const x64 = path.join(binDir, 'darwin_x64', 'clang-format');
+    if (fs.existsSync(x64)) { return x64; }
+  }
+  return null;
+}
+
+/** Format C code using the bundled clang-format binary. */
+function formatCSection(code: string): string {
+  if (!code.trim()) return code;
+  const binary = getClangFormatBinary();
+  if (!binary) { return code; }
+  const result = cp.spawnSync(binary, ['--assume-filename=input.c'], { input: code, encoding: 'utf8', timeout: 10000 });
+  if (result.status === 0 && typeof result.stdout === 'string') { return result.stdout; }
+  return code;
+}
+
 function formatComp(text: string): string {
   const lines = text.split('\n');
 
@@ -1097,8 +1128,17 @@ function formatComp(text: string): string {
     else          { blankRun = 0; collapsed.push(l); }
   }
 
-  // C section: only strip trailing whitespace — never reformat C code
-  const formattedC = cLines.map(l => l.trimEnd());
+  // C section: format with bundled clang-format
+  let formattedC: string[];
+  if (cLines.length > 0) {
+    const sepLine = cLines[0].trimEnd();
+    const cBody   = cLines.slice(1).join('\n');
+    const formatted = formatCSection(cBody);
+    // clang-format always appends a trailing newline; drop it to avoid a double-blank at end
+    formattedC = [sepLine, ...formatted.replace(/\n$/, '').split('\n')];
+  } else {
+    formattedC = [];
+  }
 
   return [...collapsed, ...formattedC].join('\n');
 }

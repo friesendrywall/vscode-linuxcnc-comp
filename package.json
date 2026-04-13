@@ -2,7 +2,7 @@
   "name": "linuxcnc-comp",
   "displayName": "LinuxCNC HAL Component (.comp)",
   "description": "Syntax highlighting, IntelliSense, diagnostics, and hover docs for LinuxCNC .comp HAL component files",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "publisher": "local",
   "engines": {
     "vscode": "^1.75.0"
@@ -52,12 +52,15 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "vsce package --no-dependencies"
+    "package": "vsce package"
   },
   "devDependencies": {
-    "@types/vscode": "^1.75.0",
     "@types/node": "^18.0.0",
-    "typescript": "^5.0.0",
-    "@vscode/vsce": "^2.22.0"
+    "@types/vscode": "^1.75.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "clang-format": "^1.8.0"
   }
 }

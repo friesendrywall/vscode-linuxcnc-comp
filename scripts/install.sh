@@ -25,7 +25,7 @@ read -rp "Enter choice [1/2/3]: " choice
 case $choice in
   1)
     echo "📦  Packaging .vsix..."
-    npx vsce package --no-dependencies 2>/dev/null || npm install -g @vscode/vsce && npx vsce package --no-dependencies
+    npx vsce package 2>/dev/null || npm install -g @vscode/vsce && npx vsce package
     VSIX_FILE=$(ls -t linuxcnc-comp-*.vsix 2>/dev/null | head -1)
     if [ -z "$VSIX_FILE" ]; then
       echo "❌  Could not find .vsix file"

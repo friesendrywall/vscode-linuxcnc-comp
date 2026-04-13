@@ -73,31 +73,66 @@ Language support for **LinuxCNC HAL component** (`.comp`) files.
 - [Node.js](https://nodejs.org/) ≥ 18
 - VSCode ≥ 1.75
 
-### Quick Install (recommended)
+The extension bundles its own `clang-format` binary (via the `clang-format` npm package) for formatting the C section of `.comp` files. No separate installation of clang-format is required.
+
+---
+
+### Linux
 
 ```bash
+git clone <repo-url>
+cd linuxcnc-comp
 chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
 
-The script will:
-1. Run `npm install`
-2. Compile TypeScript
-3. Package as a `.vsix` and install, **or** symlink the folder for development
-
-### Manual Installation
-
-```bash
-npm install
-npm run compile
-npx vsce package --no-dependencies
-code --install-extension linuxcnc-comp-0.1.0.vsix
-```
+The script will prompt you to choose between:
+1. **Package as `.vsix` and install** — recommended for normal use
+2. **Symlink the folder** — easier if you are actively editing the extension
+3. **Compile only** — if you want to install manually
 
 Then **Reload Window** in VSCode (`Ctrl+Shift+P` → `Developer: Reload Window`).
 
-### Development Mode (no packaging needed)
-Copy or symlink this folder to `~/.vscode/extensions/linuxcnc-comp-local/` and reload VSCode.
+---
+
+### Windows
+
+Open a terminal (PowerShell or Git Bash) in the repository folder:
+
+```powershell
+npm install
+npm run compile
+npx vsce package
+```
+
+Then install the generated `.vsix` from inside VSCode:
+
+1. Open the Extensions panel (`Ctrl+Shift+X`)
+2. Click the `...` menu (top-right of the panel)
+3. Select **Install from VSIX...**
+4. Browse to the `.vsix` file in the repository folder and open it
+
+Then **Reload Window** (`Ctrl+Shift+P` → `Developer: Reload Window`).
+
+---
+
+### Development Mode (either platform)
+Symlink or copy this folder to your VSCode extensions directory and reload VSCode:
+
+| Platform | Extensions directory |
+|---|---|
+| Linux / macOS | `~/.vscode/extensions/linuxcnc-comp-local/` |
+| Windows | `%USERPROFILE%\.vscode\extensions\linuxcnc-comp-local\` |
+
+On Linux:
+```bash
+ln -s "$(pwd)" ~/.vscode/extensions/linuxcnc-comp-local
+```
+
+On Windows (PowerShell, run as Administrator):
+```powershell
+New-Item -ItemType Junction -Path "$env:USERPROFILE\.vscode\extensions\linuxcnc-comp-local" -Target (Get-Location)
+```
 
 ---
 
