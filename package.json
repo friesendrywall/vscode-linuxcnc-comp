@@ -2,7 +2,7 @@
   "name": "linuxcnc-comp",
   "displayName": "LinuxCNC HAL Component (.comp)",
   "description": "Syntax highlighting, IntelliSense, diagnostics, and hover docs for LinuxCNC .comp HAL component files",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "local",
   "engines": {
     "vscode": "^1.75.0"

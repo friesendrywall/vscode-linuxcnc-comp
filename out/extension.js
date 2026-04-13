@@ -921,33 +921,39 @@ function formatDeclSection(lines) {
     return result;
 }
 /** Locate the clang-format binary bundled with the clang-format npm package. */
-function getClangFormatBinary() {
+function getBundledClangFormat() {
     const binDir = path.join(__dirname, '..', 'node_modules', 'clang-format', 'bin');
     const platform = os.platform();
     const arch = os.arch();
-    const candidate = platform === 'win32'
-        ? path.join(binDir, 'win32', 'clang-format.exe')
-        : path.join(binDir, `${platform}_${arch}`, 'clang-format');
-    if (fs.existsSync(candidate)) {
-        return candidate;
-    }
-    // arm64 macOS fallback to x64 binary
-    if (platform === 'darwin' && arch === 'arm64') {
-        const x64 = path.join(binDir, 'darwin_x64', 'clang-format');
-        if (fs.existsSync(x64)) {
-            return x64;
+    const candidates = platform === 'win32'
+        ? [path.join(binDir, 'win32', 'clang-format.exe')]
+        : [
+            path.join(binDir, `${platform}_${arch}`, 'clang-format'),
+            // arm64 macOS fallback to x64
+            ...(platform === 'darwin' && arch === 'arm64'
+                ? [path.join(binDir, 'darwin_x64', 'clang-format')]
+                : [])
+        ];
+    for (const candidate of candidates) {
+        if (!fs.existsSync(candidate)) {
+            continue;
         }
+        // npm install on Windows strips execute bits — restore them
+        if (platform !== 'win32') {
+            try {
+                fs.chmodSync(candidate, 0o755);
+            }
+            catch { /* read-only fs, will try anyway */ }
+        }
+        return candidate;
     }
     return null;
 }
-/** Format C code using the bundled clang-format binary. */
+/** Format C code using bundled clang-format, falling back to system clang-format on PATH. */
 function formatCSection(code) {
     if (!code.trim())
         return code;
-    const binary = getClangFormatBinary();
-    if (!binary) {
-        return code;
-    }
+    const binary = getBundledClangFormat() ?? 'clang-format';
     const result = cp.spawnSync(binary, ['--assume-filename=input.c'], { input: code, encoding: 'utf8', timeout: 10000 });
     if (result.status === 0 && typeof result.stdout === 'string') {
         return result.stdout;
